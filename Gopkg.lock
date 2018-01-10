@@ -2,12 +2,6 @@
 
 
 [[projects]]
-  branch = "master"
-  name = "github.com/corpix/uarand"
-  packages = ["."]
-  revision = "2b8494104d86337cdd41d0a49cbed8e4583c0ab4"
-
-[[projects]]
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
   revision = "346938d642f2ec3594ed81d874461961cd0faa76"
@@ -30,12 +24,6 @@
   packages = ["flatmap"]
   revision = "a6008b8a48a749c7c167453b9cf55ffd572b9a5d"
   version = "v0.11.2"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/icrowley/fake"
-  packages = ["."]
-  revision = "e64cc2cf92049a299f359734c6ea76073f2a8b2c"
 
 [[projects]]
   branch = "master"
@@ -64,6 +52,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a597e39328b396272025438af8a848cafa1aded99eeae175bc08cb7fd0367aaa"
+  inputs-digest = "df7c6242901d09fc49957c6aacd37d5e6f98d33119a283139a7cb26b6c6a5540"
   solver-name = "gps-cdcl"
   solver-version = 1
