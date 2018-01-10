@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/fatih/structs"
+	"github.com/hashicorp/terraform/flatmap"
 )
 
 type nameMapping struct {
@@ -32,8 +33,8 @@ func Struct(a, b interface{}, customMapping []CustomMapping, ignoreKeys []string
 }
 
 func compare(aInt, bInt interface{}, customMapping []CustomMapping, ignoreKeys []string) error {
-	a := extractNameValues(aInt)
-	b := extractNameValues(bInt)
+	a := flatmap.Flatten(structs.Map(aInt))
+	b := flatmap.Flatten(structs.Map(bInt))
 	for _, i := range ignoreKeys {
 		//TODO move down a little
 		delete(a, i)
@@ -103,7 +104,7 @@ func compare(aInt, bInt interface{}, customMapping []CustomMapping, ignoreKeys [
 	return nil
 }
 
-func hasUniqueValueMatch(m map[string]interface{}, value interface{}) (bool, string) {
+func hasUniqueValueMatch(m map[string]string, value interface{}) (bool, string) {
 	var hasSingleMatch bool
 	var matchKey string
 
@@ -139,23 +140,4 @@ func isEqual(a, b interface{}) bool {
 	}
 
 	return aVal.Interface() == bVal.Interface()
-}
-
-func extractNameValues(a interface{}) map[string]interface{} {
-	var flattened = make(map[string]interface{})
-	for n, v := range structs.Map(a) {
-		flatten(flattened, n, v)
-	}
-	return flattened
-}
-
-func flatten(m map[string]interface{}, name string, value interface{}) {
-	switch reflect.TypeOf(value).Kind() {
-	default:
-		m[name] = value
-	case reflect.Map:
-		for n, v := range value.(map[string]interface{}) {
-			flatten(m, fmt.Sprint(name, ".", n), v)
-		}
-	}
 }
