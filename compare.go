@@ -1,11 +1,12 @@
 package compare
 
 import (
-	"reflect"
-	"fmt"
-	"github.com/fatih/structs"
 	"errors"
+	"fmt"
+	"reflect"
 	"strings"
+
+	"github.com/fatih/structs"
 )
 
 type nameMapping struct {
@@ -139,6 +140,7 @@ func isEqual(a, b interface{}) bool {
 
 	return aVal.Interface() == bVal.Interface()
 }
+
 func extractNameValues(a interface{}) map[string]interface{} {
 	var flattened = make(map[string]interface{})
 	for n, v := range structs.Map(a) {
