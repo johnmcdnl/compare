@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/fatih/structs"
-	"github.com/hashicorp/terraform/flatmap"
 )
 
 type nameMapping struct {
@@ -33,8 +32,8 @@ func Struct(a, b interface{}, customMapping []CustomMapping, ignoreKeys []string
 }
 
 func compare(aInt, bInt interface{}, customMapping []CustomMapping, ignoreKeys []string) error {
-	a := flatmap.Flatten(structs.Map(aInt))
-	b := flatmap.Flatten(structs.Map(bInt))
+	a := Flatten(structs.Map(aInt))
+	b := Flatten(structs.Map(bInt))
 	for _, i := range ignoreKeys {
 		//TODO move down a little
 		delete(a, i)

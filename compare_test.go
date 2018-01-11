@@ -22,19 +22,23 @@ func t1() TT1 {
 }
 
 type TT2 struct {
-	A2 string
-	B2 string
+	A2 *string
+	B2 *string
 	C2 string
 	D2 string
 }
 
 func t2() TT2 {
 	return TT2{
-		A2: "A",
-		B2: "B",
+		A2: strPtr("A"),
+		B2: strPtr("B"),
 		C2: "C",
 		D2: "D",
 	}
+}
+
+func strPtr(s string)*string{
+	return &s
 }
 
 func testTranslateFunc(t1 TT1) TT2 {

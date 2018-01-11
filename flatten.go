@@ -1,31 +1,23 @@
-package flatmap
+package compare
 
 import (
 	"fmt"
 	"reflect"
 )
 
-// Flatten takes a structure and turns into a flat map[string]string.
-//
-// Within the "thing" parameter, only primitive values are allowed. Structs are
-// not supported. Therefore, it can only be slices, maps, primitives, and
-// any combination of those together.
-//
-// See the tests for examples of what inputs are turned into.
-func Flatten(thing map[string]interface{}) Map {
+// Kind regards  https://github.com/hashicorp/terraform/blob/master/flatmap/flatten.go for implementation details
+func Flatten(thing map[string]interface{}) map[string]string {
 	result := make(map[string]string)
 
 	for k, raw := range thing {
 		flatten(result, k, reflect.ValueOf(raw))
 	}
 
-	return Map(result)
+	return result
 }
 
 func flatten(result map[string]string, prefix string, v reflect.Value) {
-	if v.Kind() == reflect.Interface {
-		v = v.Elem()
-	}
+	v = value(v)
 
 	switch v.Kind() {
 	case reflect.Bool:
@@ -49,9 +41,7 @@ func flatten(result map[string]string, prefix string, v reflect.Value) {
 
 func flattenMap(result map[string]string, prefix string, v reflect.Value) {
 	for _, k := range v.MapKeys() {
-		if k.Kind() == reflect.Interface {
-			k = k.Elem()
-		}
+		k = value(k)
 
 		if k.Kind() != reflect.String {
 			panic(fmt.Sprintf("%s: map key is not string: %s", prefix, k))
@@ -68,4 +58,11 @@ func flattenSlice(result map[string]string, prefix string, v reflect.Value) {
 	for i := 0; i < v.Len(); i++ {
 		flatten(result, fmt.Sprintf("%s%d", prefix, i), v.Index(i))
 	}
+}
+
+func value(v reflect.Value) reflect.Value {
+	if v.Kind() == reflect.Interface || v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+	return v
 }
