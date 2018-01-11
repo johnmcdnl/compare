@@ -26,15 +26,26 @@ func flatten(result map[string]string, prefix string, v reflect.Value) {
 		} else {
 			result[prefix] = "false"
 		}
-	case reflect.Int:
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		result[prefix] = fmt.Sprintf("%d", v.Int())
+	case reflect.Float32, reflect.Float64:
+		result[prefix] = fmt.Sprintf("%d", v.Float())
 	case reflect.Map:
 		flattenMap(result, prefix, v)
 	case reflect.Slice:
 		flattenSlice(result, prefix, v)
 	case reflect.String:
 		result[prefix] = v.String()
+	case reflect.Invalid:
+		fmt.Println(v)
+		fmt.Println("invalid")
+	case reflect.Ptr:
+		flatten(result, prefix, reflect.Indirect(v))
+
 	default:
+		fmt.Println(v.Kind())
+		fmt.Println(reflect.TypeOf(v))
+		fmt.Println(reflect.TypeOf(v).Kind())
 		panic(fmt.Sprintf("Unknown: %s", v))
 	}
 }

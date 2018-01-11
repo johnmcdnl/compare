@@ -3,6 +3,7 @@ package compare
 import (
 	"testing"
 	"github.com/stretchr/testify/assert"
+	"github.com/bxcodec/faker"
 )
 
 type TT1 struct {
@@ -28,6 +29,18 @@ type TT2 struct {
 	D2 string
 }
 
+func mockedT1() TT1 {
+	var tt1 TT1
+	faker.FakeData(&tt1)
+	return tt1
+}
+
+func mockedT2() TT2 {
+	var tt2 TT2
+	faker.FakeData(&tt2)
+	return tt2
+}
+
 func t2() TT2 {
 	return TT2{
 		A2: strPtr("A"),
@@ -37,12 +50,17 @@ func t2() TT2 {
 	}
 }
 
-func strPtr(s string)*string{
+func strPtr(s string) *string {
 	return &s
 }
 
 func testTranslateFunc(t1 TT1) TT2 {
-	return t2()
+	return TT2{
+		A2: &t1.A1,
+		//B2: &t1.B1,
+		C2: t1.C1,
+		D2: t1.D1,
+	}
 }
 
 func TestStruct(t *testing.T) {
