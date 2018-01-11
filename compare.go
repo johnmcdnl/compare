@@ -3,7 +3,6 @@ package compare
 import (
 	"errors"
 	"fmt"
-	"reflect"
 	"strings"
 
 	"github.com/fatih/structs"
@@ -35,7 +34,6 @@ func compare(aInt, bInt interface{}, customMapping []CustomMapping, ignoreKeys [
 	a := Flatten(structs.Map(aInt))
 	b := Flatten(structs.Map(bInt))
 	for _, i := range ignoreKeys {
-		//TODO move down a little
 		delete(a, i)
 		delete(b, i)
 	}
@@ -50,28 +48,17 @@ func compare(aInt, bInt interface{}, customMapping []CustomMapping, ignoreKeys [
 	}
 
 	for _, mapping := range customMapping {
-		var aFound bool
-		var bFound bool
-
-		for aN := range a {
-			if aN == mapping.A {
-				aFound = true
-			}
+		if !mappingIsValid(a, mapping) {
+			matchErrors = append(matchErrors, fmt.Sprintf("No mapping found for %s : %s", mapping.A, mapping.B))
 		}
-		for bN := range b {
-			if bN == mapping.A {
-				aFound = true
-			}
-		}
-
-		if !aFound || !bFound {
+		if !mappingIsValid(b, mapping) {
 			matchErrors = append(matchErrors, fmt.Sprintf("No mapping found for %s : %s", mapping.A, mapping.B))
 		}
 	}
 
 	for _, mapping := range customMapping {
 		if mapping.Value == "" {
-			if isEqual(a[mapping.A], b[mapping.B]) {
+			if a[mapping.A] == b[mapping.B] {
 				delete(a, mapping.A)
 				delete(b, mapping.B)
 			}
@@ -79,14 +66,14 @@ func compare(aInt, bInt interface{}, customMapping []CustomMapping, ignoreKeys [
 	}
 
 	for _, mapping := range customMapping {
-		if isEqual(mapping.Value, b[mapping.B]) {
+		if mapping.Value == b[mapping.B] {
 			delete(a, mapping.A)
 			delete(b, mapping.B)
 		}
 	}
 
-	for n, v := range a {
-		matchErrors = append(matchErrors, fmt.Sprintf("No Unique Match found for %s : %s", n, v))
+	for k, v := range a {
+		matchErrors = append(matchErrors, fmt.Sprintf("No Unique Match found for %s : %s", k, v))
 	}
 
 	if len(matchErrors) > 0 {
@@ -103,40 +90,28 @@ func compare(aInt, bInt interface{}, customMapping []CustomMapping, ignoreKeys [
 	return nil
 }
 
-func hasUniqueValueMatch(m map[string]string, value interface{}) (bool, string) {
+func mappingIsValid(m map[string]string, mapping CustomMapping) bool {
+	for bN := range m {
+		if bN == mapping.B {
+			return true
+		}
+	}
+	return false
+}
+
+func hasUniqueValueMatch(m map[string]string, value string) (bool, string) {
 	var hasSingleMatch bool
 	var matchKey string
 
 	for k, v := range m {
-		if isEqual(value, v) {
+		if v == value {
 			if hasSingleMatch {
-				// not unique
 				return false, ""
 			}
 			hasSingleMatch = true
 			matchKey = k
-
 		}
 	}
 
 	return hasSingleMatch, matchKey
-}
-
-func isEqual(a, b interface{}) bool {
-
-	if a == nil || b == nil {
-		return a == nil && b == nil
-	}
-
-	var aVal = reflect.ValueOf(a)
-	var bVal = reflect.ValueOf(b)
-
-	if aVal.Kind() == reflect.Ptr {
-		aVal = aVal.Elem()
-	}
-	if bVal.Kind() == reflect.Ptr {
-		bVal = bVal.Elem()
-	}
-
-	return aVal.Interface() == bVal.Interface()
 }
