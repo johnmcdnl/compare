@@ -91,8 +91,8 @@ func compare(aInt, bInt interface{}, customMapping []CustomMapping, ignoreKeys [
 }
 
 func mappingIsValid(m map[string]string, mapping CustomMapping) bool {
-	for bN := range m {
-		if bN == mapping.B {
+	for k := range m {
+		if k == mapping.B {
 			return true
 		}
 	}
