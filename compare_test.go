@@ -2,8 +2,9 @@ package compare
 
 import (
 	"testing"
-	"github.com/stretchr/testify/assert"
+
 	"github.com/bxcodec/faker"
+	"github.com/stretchr/testify/assert"
 )
 
 type TT1 struct {

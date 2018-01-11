@@ -22,6 +22,10 @@
 
 
 [[constraint]]
+  name = "github.com/bxcodec/faker"
+  version = "1.3.0"
+
+[[constraint]]
   name = "github.com/fatih/structs"
   version = "1.0.0"
 

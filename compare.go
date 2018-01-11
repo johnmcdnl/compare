@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/fatih/structs"
-	"github.com/bxcodec/faker"
 )
 
 type nameMapping struct {
@@ -25,10 +24,6 @@ type CustomMapping struct {
 
 func NewCustomMapping(a, b string, value string) CustomMapping {
 	return CustomMapping{nameMapping: newNameMapping(a, b), Value: value}
-}
-
-func Fill(i interface{}) {
-	faker.FakeData(&i)
 }
 
 func Struct(a, b interface{}, customMapping []CustomMapping, ignoreKeys []string) error {
